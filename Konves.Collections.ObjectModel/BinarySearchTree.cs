@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections;
 
 namespace Konves.Collections.ObjectModel
 {
 	public static class BinarySearchTree
 	{
-		public static IEnumerable<INode<T>> Traverse<T>(this INode<T> root) where T : IComparable, IComparable<T>
+		public static IEnumerable<INode<T>> Traverse<T>(this INode<T> root)
 		{
 			if (ReferenceEquals(root, null))
 				yield break;
@@ -19,57 +20,76 @@ namespace Konves.Collections.ObjectModel
 			    yield return child;
 		}
 
-		public static INode<T> Search<T>(this INode<T> root, object query) where T : IComparable, IComparable<T>
+		/// <summary>
+		/// Searches for a value within the specified node and its subtree.
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="root">The root node of the subtree to search.</param>
+		/// <param name="value">The value used to specify the node for which to search.</param>
+		/// <param name="comparer">An instance of a object to compare the value of the nodes in the subtree.</param>
+		/// <returns>The node whose key matches the query value</returns>
+		public static INode<T> Search<T>(this INode<T> root, object value, IComparer comparer)
 		{
 			if (ReferenceEquals(root, null))
 				return null;
 
-			int c = -root.Value.CompareTo(query);
+			int c = -comparer.Compare(root.Value, value);
 
 			if (c < 0)
-				return root.Left.Search(query);
+				return root.Left.Search(value, comparer);
 
 			if (c > 0)
-				return root.Right.Search(query);
+				return root.Right.Search(value, comparer);
 
 			return root;
 		}
 
-		public static bool Insert<T>(this INode<T> root, INode<T> node) where T : IComparable, IComparable<T>
+		/// <summary>
+		/// Inserts a node to into the subtree with the specified root and returns the new root node.
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="node">The node to insert.</param>
+		/// <param name="root">The original root node.</param>
+		/// <param name="comparer">An instance of a object to compare the value of the nodes in the subtree.</param>
+		/// <returns>Returns the subtree's new root node.</returns>
+		public static INode<T> Insert<T>(this INode<T> root, INode<T> node, IComparer comparer)
 		{
 			if (ReferenceEquals(root, null))
-				return false;
+				return node;
 
-			int c = -root.Value.CompareTo(node.Value);
+			int c = -comparer.Compare(root.Value, node.Value);
 
 			if (c < 0)
 				if (ReferenceEquals(root.Left, null))
 					root.Left = node;
 				else
-					return root.Left.Insert(node);
+					return root.Left.Insert(node, comparer);
 			else if (c > 0)
 				if (ReferenceEquals(root.Right, null))
 					root.Right = node;
 				else
-					return root.Right.Insert(node);
+					return root.Right.Insert(node, comparer);
 			else
-				return false;
+				return root; // node already exists. don't insert, but still return existing root
 
-			return true;
+			// TODO: balance and return new root instead.
+			return root;
 		}
-
-		// TODO: return new root node
-		public static bool Remove<T>(this INode<T> root, object query, bool favorLeft) where T : IComparable, IComparable<T>
+		
+		/// <summary>
+		/// Removes a node matching the specified query and returns the resulting tree's root node.
+		/// </summary>
+		public static INode<T> Remove<T>(this INode<T> root, object value, IComparer comparer, bool favorLeft)
 		{
 			if (ReferenceEquals(root, null))
-				return false;
+				return root; // node is not found. don't remove, but still return existing root
 
-			int c = -root.Value.CompareTo(query);
+			int c = -comparer.Compare(root.Value, value);
 
 			if (c < 0)
 			{
 				if (ReferenceEquals(root.Left, null))
-					return false;
+					return root; // node is not found. don't remove, but still return existing root
 
 				else if (ReferenceEquals(root.Left.Left, null) && ReferenceEquals(root.Left.Right, null)) // Delete leaf
 					root.Left = null;
@@ -79,18 +99,19 @@ namespace Konves.Collections.ObjectModel
 				else if (ReferenceEquals(root.Left.Right, null))
 					root.Left = root.Left.Left;
 
-				else if (root.Left.Value.CompareTo(query) == 0)
-					RemoveLeft(root, favorLeft); // Delete with children
+				else if (comparer.Compare(root.Left.Value, value) == 0)
+					RemoveLeft(root, comparer, favorLeft); // Delete with children
 
 				else
-					return root.Left.Remove(query, favorLeft); // proceed to left
+					return root.Left.Remove(value, comparer, favorLeft); // proceed to left
 
-				return true;
+				// TODO: balance and return new root instead.
+				return root;
 			}
 			if (c > 0)
 			{
 				if (ReferenceEquals(root.Right, null))
-					return false;
+					return root;
 
 				else if (ReferenceEquals(root.Right.Right, null) && ReferenceEquals(root.Right.Left, null)) // Delete leaf
 					root.Right = null;
@@ -100,13 +121,13 @@ namespace Konves.Collections.ObjectModel
 				else if (ReferenceEquals(root.Right.Left, null))
 					root.Right = root.Right.Right;
 
-				else if (root.Right.Value.CompareTo(query) == 0)
-					RemoveRight(root, favorLeft); // Delete with children
+				else if (comparer.Compare(root.Right.Value, value) == 0)
+					RemoveRight(root, comparer, favorLeft); // Delete with children
 
 				else
-					return root.Right.Remove(query, favorLeft); // proceed to right
+					return root.Right.Remove(value, comparer, favorLeft); // proceed to right
 
-				return true;
+				return root;
 			}
 
 			// delete root
@@ -114,7 +135,7 @@ namespace Konves.Collections.ObjectModel
 		}
 
 		// may break if root has no children
-		public static void RemoveLeft<T>(INode<T> root, bool favorLeft) where T : IComparable, IComparable<T>
+		public static void RemoveLeft<T>(INode<T> root, IComparer comparer, bool favorLeft)
 		{
 			INode<T> delete = root.Left;
 
@@ -179,7 +200,7 @@ namespace Konves.Collections.ObjectModel
 		}
 
 		// may break if root has no children
-		public static void RemoveRight<T>(INode<T> root, bool favorLeft) where T : IComparable, IComparable<T>
+		public static void RemoveRight<T>(INode<T> root, IComparer comparer, bool favorLeft)
 		{
 			INode<T> delete = root.Right;
 

@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Konves.Collections.ObjectModel
 {
-	public class Node<T> : INode<T> where T : IComparable, IComparable<T>
+	public class Node<T> : INode<T> //where T : IComparable, IComparable<T>
 	{
 		public INode<T> Left { get; set; }
 

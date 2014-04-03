@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Konves.Collections.ObjectModel
 {
-	public interface INode<T> where T : IComparable, IComparable<T>
+	public interface INode<T> //where T : IComparable, IComparable<T>
 	{
 		INode<T> Left { get; set; }
 		INode<T> Right { get; set; }

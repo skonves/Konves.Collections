@@ -3,12 +3,21 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Linq;
 using System.Collections.Generic;
+using System.Collections;
 
 namespace Konves.Collections.ObjectModel.Tests
 {
 	[TestClass()]
 	public class BinarySearchTreeTest
 	{
+		public class Comparer<T> : IComparer where T : IComparable
+		{
+			public int Compare(object x, object y)
+			{
+				return (x as IComparable).CompareTo(y);
+			}
+		}
+
 		[TestMethod()]
 		public void TraverseTest()
 		{
@@ -20,7 +29,7 @@ namespace Konves.Collections.ObjectModel.Tests
 			Node<int> e = new Node<int> { Value = 5 };
 			Node<int> f = new Node<int> { Value = 6 };
 			Node<int> g = new Node<int> { Value = 7 };
-			
+
 			b.Left = a;
 			b.Right = c;
 			f.Left = e;
@@ -60,10 +69,12 @@ namespace Konves.Collections.ObjectModel.Tests
 
 			Node<int> root = d;
 
+			IComparer comparer = (new Comparer<int>());
+
 			Node<int> expected = c;
 
 			// Act
-			Node<int> result = (Node<int>)root.Search(c.Value);
+			Node<int> result = (Node<int>)root.Search(c.Value, comparer);
 
 			// Assert
 			Assert.AreSame(expected, result);
@@ -88,14 +99,15 @@ namespace Konves.Collections.ObjectModel.Tests
 
 			Node<int> root = d;
 			Node<int> c = new Node<int> { Value = 3 };
+			IComparer comparer = (new Comparer<int>());
 
-			bool expected = true;
+			INode<int> expected = root;
 
 			// Act
-			bool result = root.Insert(c);
-			
+			INode<int> result = root.Insert(c, comparer);
+
 			// Assert
-			Assert.AreEqual(expected, result);
+			Assert.AreSame(expected, result);
 			Assert.AreSame(b.Right, c);
 		}
 
@@ -118,14 +130,15 @@ namespace Konves.Collections.ObjectModel.Tests
 
 			Node<int> root = d;
 			Node<int> c = new Node<int> { Value = 6 };
+			IComparer comparer = (new Comparer<int>());
 
-			bool expected = false;
+			INode<int> expected = root;
 
 			// Act
-			bool result = root.Insert(c);
+			INode<int> result = root.Insert(c, comparer);
 
 			// Assert
-			Assert.AreEqual(expected, result);
+			Assert.AreSame(expected, result);
 		}
 
 		[TestMethod()]
@@ -134,7 +147,7 @@ namespace Konves.Collections.ObjectModel.Tests
 			// Arrange
 			Node<int> a = new Node<int> { Value = 1 };
 			Node<int> b = new Node<int> { Value = 2 };
-			Node<int> c = new Node<int> { Value = 3};
+			Node<int> c = new Node<int> { Value = 3 };
 			Node<int> d = new Node<int> { Value = 4 };
 			Node<int> e = new Node<int> { Value = 5 };
 			Node<int> f = new Node<int> { Value = 6 };
@@ -145,7 +158,7 @@ namespace Konves.Collections.ObjectModel.Tests
 			Node<int> k = new Node<int> { Value = 11 };
 			Node<int> l = new Node<int> { Value = 12 };
 			Node<int> m = new Node<int> { Value = 13 };
-			Node<int> n= new Node<int> { Value = 14 };
+			Node<int> n = new Node<int> { Value = 14 };
 			Node<int> o = new Node<int> { Value = 15 };
 
 			e.Left = d;
@@ -164,9 +177,10 @@ namespace Konves.Collections.ObjectModel.Tests
 			l.Right = n;
 
 			Node<int> root = l;
+			IComparer comparer = (new Comparer<int>());
 
 			// Act
-			BinarySearchTree.RemoveLeft(root, true);
+			BinarySearchTree.RemoveLeft(root, comparer, true);
 
 			// Assert
 			Assert.AreSame(l.Left, g);
@@ -191,9 +205,10 @@ namespace Konves.Collections.ObjectModel.Tests
 			d.Left = b;
 
 			Node<int> root = d;
+			IComparer comparer = (new Comparer<int>());
 
 			// Act
-			BinarySearchTree.RemoveLeft(root, true);
+			BinarySearchTree.RemoveLeft(root, comparer, true);
 
 			// Assert
 			Assert.AreSame(d.Left, a);
@@ -238,9 +253,10 @@ namespace Konves.Collections.ObjectModel.Tests
 			l.Right = n;
 
 			Node<int> root = l;
+			IComparer comparer = (new Comparer<int>());
 
 			// Act
-			BinarySearchTree.RemoveLeft(root, false);
+			BinarySearchTree.RemoveLeft(root, comparer, false);
 
 			// Assert
 			Assert.AreSame(l.Left, e);
@@ -250,7 +266,6 @@ namespace Konves.Collections.ObjectModel.Tests
 			Assert.IsNull(d.Left);
 			Assert.IsNull(d.Right);
 		}
-
 
 		[TestMethod()]
 		public void RemoveLeftTest_FavorRight_Small()
@@ -266,9 +281,10 @@ namespace Konves.Collections.ObjectModel.Tests
 			d.Left = b;
 
 			Node<int> root = d;
+			IComparer comparer = (new Comparer<int>());
 
 			// Act
-			BinarySearchTree.RemoveLeft(root, false);
+			BinarySearchTree.RemoveLeft(root, comparer, false);
 
 			// Assert
 			Assert.AreSame(d.Left, c);
@@ -276,6 +292,7 @@ namespace Konves.Collections.ObjectModel.Tests
 			Assert.IsNull(b.Left);
 			Assert.IsNull(b.Right);
 		}
+
 
 		[TestMethod()]
 		public void RemoveRightTest_FavorLeft_Large()
@@ -313,9 +330,10 @@ namespace Konves.Collections.ObjectModel.Tests
 			d.Right = l;
 
 			Node<int> root = d;
+			IComparer comparer = (new Comparer<int>());
 
 			// Act
-			BinarySearchTree.RemoveRight(root, true);
+			BinarySearchTree.RemoveRight(root, comparer, true);
 
 			// Assert
 			Assert.AreSame(d.Right, k);
@@ -340,9 +358,10 @@ namespace Konves.Collections.ObjectModel.Tests
 			c.Right = d;
 
 			Node<int> root = a;
+			IComparer comparer = (new Comparer<int>());
 
 			// Act
-			BinarySearchTree.RemoveRight(root, true);
+			BinarySearchTree.RemoveRight(root, comparer, true);
 
 			// Assert
 			Assert.AreSame(a.Right, b);
@@ -387,9 +406,10 @@ namespace Konves.Collections.ObjectModel.Tests
 			d.Right = h;
 
 			Node<int> root = d;
+			IComparer comparer = (new Comparer<int>());
 
 			// Act
-			BinarySearchTree.RemoveRight(root, false);
+			BinarySearchTree.RemoveRight(root, comparer, false);
 
 			// Assert
 			Assert.AreSame(d.Right, i);
@@ -399,7 +419,7 @@ namespace Konves.Collections.ObjectModel.Tests
 			Assert.IsNull(h.Left);
 			Assert.IsNull(h.Right);
 		}
-		
+
 		[TestMethod()]
 		public void RemoveRightTest_FavorRight_Small()
 		{
@@ -414,9 +434,10 @@ namespace Konves.Collections.ObjectModel.Tests
 			c.Right = d;
 
 			Node<int> root = a;
+			IComparer comparer = (new Comparer<int>());
 
 			// Act
-			BinarySearchTree.RemoveRight(root, false);
+			BinarySearchTree.RemoveRight(root, comparer, false);
 
 			// Assert
 			Assert.AreSame(a.Right, d);
