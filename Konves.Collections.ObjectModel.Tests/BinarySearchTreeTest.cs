@@ -142,7 +142,64 @@ namespace Konves.Collections.ObjectModel.Tests
 		}
 
 		[TestMethod()]
-		public void RemoveLeftTest_FavorLeft_Large()
+		public void Remove_Leaf()
+		{
+			// Arrange
+			Node<int> a = new Node<int> { Value = 1 };
+
+			Node<int> root = a;
+			IComparer comparer = (new Comparer<int>());
+			INode<int> expected = null;
+
+			// Act
+			INode<int> result = root.Remove(1, comparer, true);
+
+			// Assert
+			Assert.AreSame(expected, result);			
+		}
+
+		[TestMethod()]
+		public void Remove_LeftBranch()
+		{
+			// Arrange
+			Node<int> a = new Node<int> { Value = 1 };
+			Node<int> b = new Node<int> { Value = 2 };
+
+			b.Left = a;
+
+			Node<int> root = b;
+			IComparer comparer = (new Comparer<int>());
+			INode<int> expected = a;
+
+			// Act
+			INode<int> result = root.Remove(b.Value, comparer, true);
+
+			// Assert
+			Assert.AreSame(expected, result);
+		}
+
+		[TestMethod()]
+		public void Remove_RightBranch()
+		{
+			// Arrange
+			Node<int> a = new Node<int> { Value = 1 };
+			Node<int> b = new Node<int> { Value = 2 };
+
+			a.Right = b;
+
+			Node<int> root = a;
+			IComparer comparer = (new Comparer<int>());
+			INode<int> expected = b;
+
+			// Act
+			INode<int> result = root.Remove(a.Value, comparer, true);
+
+			// Assert
+			Assert.AreSame(expected, result);
+		}
+
+		[TestMethod()]
+		public void Remove_FavorLeft()
 		{
 			// Arrange
 			Node<int> a = new Node<int> { Value = 1 };
@@ -158,294 +215,338 @@ namespace Konves.Collections.ObjectModel.Tests
 			Node<int> k = new Node<int> { Value = 11 };
 			Node<int> l = new Node<int> { Value = 12 };
 			Node<int> m = new Node<int> { Value = 13 };
-			Node<int> n = new Node<int> { Value = 14 };
-			Node<int> o = new Node<int> { Value = 15 };
 
-			e.Left = d;
-			e.Right = f;
-			g.Left = e;
-			c.Right = g;
-			b.Left = a;
-			b.Right = c;
+			d.Left = c;
+			d.Right = e;
 			j.Left = i;
 			j.Right = k;
-			h.Left = b;
+
+			f.Left = d;
 			h.Right = j;
-			n.Left = m;
-			n.Right = o;
+
+			b.Left = a;
+			b.Right = f;
 			l.Left = h;
-			l.Right = n;
+			l.Right = m;
 
-			Node<int> root = l;
+			g.Left = b;
+			g.Right = l;
+
+			Node<int> root = g;
 			IComparer comparer = (new Comparer<int>());
+			INode<int> expected = f;
 
 			// Act
-			BinarySearchTree.RemoveLeft(root, comparer, true);
+			INode<int> result = root.Remove(root.Value, comparer, true);
 
 			// Assert
-			Assert.AreSame(l.Left, g);
-			Assert.AreSame(g.Left, b);
-			Assert.AreSame(g.Right, j);
-			Assert.AreSame(c.Right, e);
-			Assert.IsNull(h.Left);
-			Assert.IsNull(h.Right);
+			Assert.AreSame(expected, result);
 		}
 
-		[TestMethod()]
-		public void RemoveLeftTest_FavorLeft_Small()
-		{
-			// Arrange
-			Node<int> a = new Node<int> { Value = 1 };
-			Node<int> b = new Node<int> { Value = 2 };
-			Node<int> c = new Node<int> { Value = 3 };
-			Node<int> d = new Node<int> { Value = 4 };
+		//[TestMethod()]
+		//public void RemoveLeftTest_FavorLeft_Large()
+		//{
+		//    // Arrange
+		//    Node<int> a = new Node<int> { Value = 1 };
+		//    Node<int> b = new Node<int> { Value = 2 };
+		//    Node<int> c = new Node<int> { Value = 3 };
+		//    Node<int> d = new Node<int> { Value = 4 };
+		//    Node<int> e = new Node<int> { Value = 5 };
+		//    Node<int> f = new Node<int> { Value = 6 };
+		//    Node<int> g = new Node<int> { Value = 7 };
+		//    Node<int> h = new Node<int> { Value = 8 };
+		//    Node<int> i = new Node<int> { Value = 9 };
+		//    Node<int> j = new Node<int> { Value = 10 };
+		//    Node<int> k = new Node<int> { Value = 11 };
+		//    Node<int> l = new Node<int> { Value = 12 };
+		//    Node<int> m = new Node<int> { Value = 13 };
+		//    Node<int> n = new Node<int> { Value = 14 };
+		//    Node<int> o = new Node<int> { Value = 15 };
 
-			b.Left = a;
-			b.Right = c;
-			d.Left = b;
+		//    e.Left = d;
+		//    e.Right = f;
+		//    g.Left = e;
+		//    c.Right = g;
+		//    b.Left = a;
+		//    b.Right = c;
+		//    j.Left = i;
+		//    j.Right = k;
+		//    h.Left = b;
+		//    h.Right = j;
+		//    n.Left = m;
+		//    n.Right = o;
+		//    l.Left = h;
+		//    l.Right = n;
 
-			Node<int> root = d;
-			IComparer comparer = (new Comparer<int>());
+		//    Node<int> root = l;
+		//    IComparer comparer = (new Comparer<int>());
 
-			// Act
-			BinarySearchTree.RemoveLeft(root, comparer, true);
+		//    // Act
+		//    BinarySearchTree.RemoveLeft(root, comparer, true);
 
-			// Assert
-			Assert.AreSame(d.Left, a);
-			Assert.AreSame(a.Right, c);
-			Assert.IsNull(b.Left);
-			Assert.IsNull(b.Right);
-		}
+		//    // Assert
+		//    Assert.AreSame(l.Left, g);
+		//    Assert.AreSame(g.Left, b);
+		//    Assert.AreSame(g.Right, j);
+		//    Assert.AreSame(c.Right, e);
+		//    Assert.IsNull(h.Left);
+		//    Assert.IsNull(h.Right);
+		//}
 
-		[TestMethod()]
-		public void RemoveLeftTest_FavorRight_Large()
-		{
-			// Arrange
-			Node<int> a = new Node<int> { Value = 1 };
-			Node<int> b = new Node<int> { Value = 2 };
-			Node<int> c = new Node<int> { Value = 3 };
-			Node<int> d = new Node<int> { Value = 4 };
-			Node<int> e = new Node<int> { Value = 5 };
-			Node<int> f = new Node<int> { Value = 6 };
-			Node<int> g = new Node<int> { Value = 7 };
-			Node<int> h = new Node<int> { Value = 8 };
-			Node<int> i = new Node<int> { Value = 9 };
-			Node<int> j = new Node<int> { Value = 10 };
-			Node<int> k = new Node<int> { Value = 11 };
-			Node<int> l = new Node<int> { Value = 12 };
-			Node<int> m = new Node<int> { Value = 13 };
-			Node<int> n = new Node<int> { Value = 14 };
-			Node<int> o = new Node<int> { Value = 15 };
+		//[TestMethod()]
+		//public void RemoveLeftTest_FavorLeft_Small()
+		//{
+		//    // Arrange
+		//    Node<int> a = new Node<int> { Value = 1 };
+		//    Node<int> b = new Node<int> { Value = 2 };
+		//    Node<int> c = new Node<int> { Value = 3 };
+		//    Node<int> d = new Node<int> { Value = 4 };
 
-			g.Left = d;
-			g.Right = h;
-			e.Right = g;
-			i.Left = e;
-			b.Left = a;
-			b.Right = c;
-			j.Left = i;
-			j.Right = k;
-			d.Left = b;
-			d.Right = j;
-			n.Left = m;
-			n.Right = o;
-			l.Left = d;
-			l.Right = n;
+		//    b.Left = a;
+		//    b.Right = c;
+		//    d.Left = b;
 
-			Node<int> root = l;
-			IComparer comparer = (new Comparer<int>());
+		//    Node<int> root = d;
+		//    IComparer comparer = (new Comparer<int>());
 
-			// Act
-			BinarySearchTree.RemoveLeft(root, comparer, false);
+		//    // Act
+		//    BinarySearchTree.RemoveLeft(root, comparer, true);
 
-			// Assert
-			Assert.AreSame(l.Left, e);
-			Assert.AreSame(e.Left, b);
-			Assert.AreSame(e.Right, j);
-			Assert.AreSame(i.Left, g);
-			Assert.IsNull(d.Left);
-			Assert.IsNull(d.Right);
-		}
+		//    // Assert
+		//    Assert.AreSame(d.Left, a);
+		//    Assert.AreSame(a.Right, c);
+		//    Assert.IsNull(b.Left);
+		//    Assert.IsNull(b.Right);
+		//}
 
-		[TestMethod()]
-		public void RemoveLeftTest_FavorRight_Small()
-		{
-			// Arrange
-			Node<int> a = new Node<int> { Value = 1 };
-			Node<int> b = new Node<int> { Value = 2 };
-			Node<int> c = new Node<int> { Value = 3 };
-			Node<int> d = new Node<int> { Value = 4 };
+		//[TestMethod()]
+		//public void RemoveLeftTest_FavorRight_Large()
+		//{
+		//    // Arrange
+		//    Node<int> a = new Node<int> { Value = 1 };
+		//    Node<int> b = new Node<int> { Value = 2 };
+		//    Node<int> c = new Node<int> { Value = 3 };
+		//    Node<int> d = new Node<int> { Value = 4 };
+		//    Node<int> e = new Node<int> { Value = 5 };
+		//    Node<int> f = new Node<int> { Value = 6 };
+		//    Node<int> g = new Node<int> { Value = 7 };
+		//    Node<int> h = new Node<int> { Value = 8 };
+		//    Node<int> i = new Node<int> { Value = 9 };
+		//    Node<int> j = new Node<int> { Value = 10 };
+		//    Node<int> k = new Node<int> { Value = 11 };
+		//    Node<int> l = new Node<int> { Value = 12 };
+		//    Node<int> m = new Node<int> { Value = 13 };
+		//    Node<int> n = new Node<int> { Value = 14 };
+		//    Node<int> o = new Node<int> { Value = 15 };
 
-			b.Left = a;
-			b.Right = c;
-			d.Left = b;
+		//    g.Left = d;
+		//    g.Right = h;
+		//    e.Right = g;
+		//    i.Left = e;
+		//    b.Left = a;
+		//    b.Right = c;
+		//    j.Left = i;
+		//    j.Right = k;
+		//    d.Left = b;
+		//    d.Right = j;
+		//    n.Left = m;
+		//    n.Right = o;
+		//    l.Left = d;
+		//    l.Right = n;
 
-			Node<int> root = d;
-			IComparer comparer = (new Comparer<int>());
+		//    Node<int> root = l;
+		//    IComparer comparer = (new Comparer<int>());
 
-			// Act
-			BinarySearchTree.RemoveLeft(root, comparer, false);
+		//    // Act
+		//    BinarySearchTree.RemoveLeft(root, comparer, false);
 
-			// Assert
-			Assert.AreSame(d.Left, c);
-			Assert.AreSame(c.Left, a);
-			Assert.IsNull(b.Left);
-			Assert.IsNull(b.Right);
-		}
+		//    // Assert
+		//    Assert.AreSame(l.Left, e);
+		//    Assert.AreSame(e.Left, b);
+		//    Assert.AreSame(e.Right, j);
+		//    Assert.AreSame(i.Left, g);
+		//    Assert.IsNull(d.Left);
+		//    Assert.IsNull(d.Right);
+		//}
+
+		//[TestMethod()]
+		//public void RemoveLeftTest_FavorRight_Small()
+		//{
+		//    // Arrange
+		//    Node<int> a = new Node<int> { Value = 1 };
+		//    Node<int> b = new Node<int> { Value = 2 };
+		//    Node<int> c = new Node<int> { Value = 3 };
+		//    Node<int> d = new Node<int> { Value = 4 };
+
+		//    b.Left = a;
+		//    b.Right = c;
+		//    d.Left = b;
+
+		//    Node<int> root = d;
+		//    IComparer comparer = (new Comparer<int>());
+
+		//    // Act
+		//    BinarySearchTree.RemoveLeft(root, comparer, false);
+
+		//    // Assert
+		//    Assert.AreSame(d.Left, c);
+		//    Assert.AreSame(c.Left, a);
+		//    Assert.IsNull(b.Left);
+		//    Assert.IsNull(b.Right);
+		//}
 
 
-		[TestMethod()]
-		public void RemoveRightTest_FavorLeft_Large()
-		{
-			// Arrange
-			Node<int> a = new Node<int> { Value = 1 };
-			Node<int> b = new Node<int> { Value = 2 };
-			Node<int> c = new Node<int> { Value = 3 };
-			Node<int> d = new Node<int> { Value = 4 };
-			Node<int> e = new Node<int> { Value = 5 };
-			Node<int> f = new Node<int> { Value = 6 };
-			Node<int> g = new Node<int> { Value = 7 };
-			Node<int> h = new Node<int> { Value = 8 };
-			Node<int> i = new Node<int> { Value = 9 };
-			Node<int> j = new Node<int> { Value = 10 };
-			Node<int> k = new Node<int> { Value = 11 };
-			Node<int> l = new Node<int> { Value = 12 };
-			Node<int> m = new Node<int> { Value = 13 };
-			Node<int> n = new Node<int> { Value = 14 };
-			Node<int> o = new Node<int> { Value = 15 };
+		//[TestMethod()]
+		//public void RemoveRightTest_FavorLeft_Large()
+		//{
+		//    // Arrange
+		//    Node<int> a = new Node<int> { Value = 1 };
+		//    Node<int> b = new Node<int> { Value = 2 };
+		//    Node<int> c = new Node<int> { Value = 3 };
+		//    Node<int> d = new Node<int> { Value = 4 };
+		//    Node<int> e = new Node<int> { Value = 5 };
+		//    Node<int> f = new Node<int> { Value = 6 };
+		//    Node<int> g = new Node<int> { Value = 7 };
+		//    Node<int> h = new Node<int> { Value = 8 };
+		//    Node<int> i = new Node<int> { Value = 9 };
+		//    Node<int> j = new Node<int> { Value = 10 };
+		//    Node<int> k = new Node<int> { Value = 11 };
+		//    Node<int> l = new Node<int> { Value = 12 };
+		//    Node<int> m = new Node<int> { Value = 13 };
+		//    Node<int> n = new Node<int> { Value = 14 };
+		//    Node<int> o = new Node<int> { Value = 15 };
 
-			i.Left = h;
-			i.Right = j;
-			k.Left = i;
-			g.Right = k;
-			f.Left = e;
-			f.Right = g;
-			n.Left = m;
-			n.Right = o;
-			b.Left = a;
-			b.Right = c;
-			l.Left = f;
-			l.Right = n;
-			d.Left = b;
-			d.Right = l;
+		//    i.Left = h;
+		//    i.Right = j;
+		//    k.Left = i;
+		//    g.Right = k;
+		//    f.Left = e;
+		//    f.Right = g;
+		//    n.Left = m;
+		//    n.Right = o;
+		//    b.Left = a;
+		//    b.Right = c;
+		//    l.Left = f;
+		//    l.Right = n;
+		//    d.Left = b;
+		//    d.Right = l;
 
-			Node<int> root = d;
-			IComparer comparer = (new Comparer<int>());
+		//    Node<int> root = d;
+		//    IComparer comparer = (new Comparer<int>());
 
-			// Act
-			BinarySearchTree.RemoveRight(root, comparer, true);
+		//    // Act
+		//    BinarySearchTree.RemoveRight(root, comparer, true);
 
-			// Assert
-			Assert.AreSame(d.Right, k);
-			Assert.AreSame(k.Left, f);
-			Assert.AreSame(k.Right, n);
-			Assert.AreSame(g.Right, i);
-			Assert.IsNull(l.Left);
-			Assert.IsNull(l.Right);
-		}
+		//    // Assert
+		//    Assert.AreSame(d.Right, k);
+		//    Assert.AreSame(k.Left, f);
+		//    Assert.AreSame(k.Right, n);
+		//    Assert.AreSame(g.Right, i);
+		//    Assert.IsNull(l.Left);
+		//    Assert.IsNull(l.Right);
+		//}
 
-		[TestMethod()]
-		public void RemoveRightTest_FavorLeft_Small()
-		{
-			// Arrange
-			Node<int> a = new Node<int> { Value = 1 };
-			Node<int> b = new Node<int> { Value = 2 };
-			Node<int> c = new Node<int> { Value = 3 };
-			Node<int> d = new Node<int> { Value = 4 };
+		//[TestMethod()]
+		//public void RemoveRightTest_FavorLeft_Small()
+		//{
+		//    // Arrange
+		//    Node<int> a = new Node<int> { Value = 1 };
+		//    Node<int> b = new Node<int> { Value = 2 };
+		//    Node<int> c = new Node<int> { Value = 3 };
+		//    Node<int> d = new Node<int> { Value = 4 };
 
-			a.Right = c;
-			c.Left = b;
-			c.Right = d;
+		//    a.Right = c;
+		//    c.Left = b;
+		//    c.Right = d;
 
-			Node<int> root = a;
-			IComparer comparer = (new Comparer<int>());
+		//    Node<int> root = a;
+		//    IComparer comparer = (new Comparer<int>());
 
-			// Act
-			BinarySearchTree.RemoveRight(root, comparer, true);
+		//    // Act
+		//    BinarySearchTree.RemoveRight(root, comparer, true);
 
-			// Assert
-			Assert.AreSame(a.Right, b);
-			Assert.AreSame(b.Right, d);
-			Assert.IsNull(c.Left);
-			Assert.IsNull(c.Right);
-		}
+		//    // Assert
+		//    Assert.AreSame(a.Right, b);
+		//    Assert.AreSame(b.Right, d);
+		//    Assert.IsNull(c.Left);
+		//    Assert.IsNull(c.Right);
+		//}
 
-		[TestMethod()]
-		public void RemoveRightTest_FavorRight_Large()
-		{
-			// Arrange
-			Node<int> a = new Node<int> { Value = 1 };
-			Node<int> b = new Node<int> { Value = 2 };
-			Node<int> c = new Node<int> { Value = 3 };
-			Node<int> d = new Node<int> { Value = 4 };
-			Node<int> e = new Node<int> { Value = 5 };
-			Node<int> f = new Node<int> { Value = 6 };
-			Node<int> g = new Node<int> { Value = 7 };
-			Node<int> h = new Node<int> { Value = 8 };
-			Node<int> i = new Node<int> { Value = 9 };
-			Node<int> j = new Node<int> { Value = 10 };
-			Node<int> k = new Node<int> { Value = 11 };
-			Node<int> l = new Node<int> { Value = 12 };
-			Node<int> m = new Node<int> { Value = 13 };
-			Node<int> n = new Node<int> { Value = 14 };
-			Node<int> o = new Node<int> { Value = 15 };
+		//[TestMethod()]
+		//public void RemoveRightTest_FavorRight_Large()
+		//{
+		//    // Arrange
+		//    Node<int> a = new Node<int> { Value = 1 };
+		//    Node<int> b = new Node<int> { Value = 2 };
+		//    Node<int> c = new Node<int> { Value = 3 };
+		//    Node<int> d = new Node<int> { Value = 4 };
+		//    Node<int> e = new Node<int> { Value = 5 };
+		//    Node<int> f = new Node<int> { Value = 6 };
+		//    Node<int> g = new Node<int> { Value = 7 };
+		//    Node<int> h = new Node<int> { Value = 8 };
+		//    Node<int> i = new Node<int> { Value = 9 };
+		//    Node<int> j = new Node<int> { Value = 10 };
+		//    Node<int> k = new Node<int> { Value = 11 };
+		//    Node<int> l = new Node<int> { Value = 12 };
+		//    Node<int> m = new Node<int> { Value = 13 };
+		//    Node<int> n = new Node<int> { Value = 14 };
+		//    Node<int> o = new Node<int> { Value = 15 };
 
-			k.Left = j;
-			k.Right = l;
-			i.Right = k;
-			m.Left = i;
-			f.Left = e;
-			f.Right = g;
-			n.Left = m;
-			n.Right = o;
-			b.Left = a;
-			b.Right = c;
-			h.Left = f;
-			h.Right = n;
-			d.Left = b;
-			d.Right = h;
+		//    k.Left = j;
+		//    k.Right = l;
+		//    i.Right = k;
+		//    m.Left = i;
+		//    f.Left = e;
+		//    f.Right = g;
+		//    n.Left = m;
+		//    n.Right = o;
+		//    b.Left = a;
+		//    b.Right = c;
+		//    h.Left = f;
+		//    h.Right = n;
+		//    d.Left = b;
+		//    d.Right = h;
 
-			Node<int> root = d;
-			IComparer comparer = (new Comparer<int>());
+		//    Node<int> root = d;
+		//    IComparer comparer = (new Comparer<int>());
 
-			// Act
-			BinarySearchTree.RemoveRight(root, comparer, false);
+		//    // Act
+		//    BinarySearchTree.RemoveRight(root, comparer, false);
 
-			// Assert
-			Assert.AreSame(d.Right, i);
-			Assert.AreSame(i.Left, f);
-			Assert.AreSame(i.Right, n);
-			Assert.AreSame(m.Left, k);
-			Assert.IsNull(h.Left);
-			Assert.IsNull(h.Right);
-		}
+		//    // Assert
+		//    Assert.AreSame(d.Right, i);
+		//    Assert.AreSame(i.Left, f);
+		//    Assert.AreSame(i.Right, n);
+		//    Assert.AreSame(m.Left, k);
+		//    Assert.IsNull(h.Left);
+		//    Assert.IsNull(h.Right);
+		//}
 
-		[TestMethod()]
-		public void RemoveRightTest_FavorRight_Small()
-		{
-			// Arrange
-			Node<int> a = new Node<int> { Value = 1 };
-			Node<int> b = new Node<int> { Value = 2 };
-			Node<int> c = new Node<int> { Value = 3 };
-			Node<int> d = new Node<int> { Value = 4 };
+		//[TestMethod()]
+		//public void RemoveRightTest_FavorRight_Small()
+		//{
+		//    // Arrange
+		//    Node<int> a = new Node<int> { Value = 1 };
+		//    Node<int> b = new Node<int> { Value = 2 };
+		//    Node<int> c = new Node<int> { Value = 3 };
+		//    Node<int> d = new Node<int> { Value = 4 };
 
-			a.Right = c;
-			c.Left = b;
-			c.Right = d;
+		//    a.Right = c;
+		//    c.Left = b;
+		//    c.Right = d;
 
-			Node<int> root = a;
-			IComparer comparer = (new Comparer<int>());
+		//    Node<int> root = a;
+		//    IComparer comparer = (new Comparer<int>());
 
-			// Act
-			BinarySearchTree.RemoveRight(root, comparer, false);
+		//    // Act
+		//    BinarySearchTree.RemoveRight(root, comparer, false);
 
-			// Assert
-			Assert.AreSame(a.Right, d);
-			Assert.AreSame(d.Left, b);
-			Assert.IsNull(c.Left);
-			Assert.IsNull(c.Right);
-		}
-
+		//    // Assert
+		//    Assert.AreSame(a.Right, d);
+		//    Assert.AreSame(d.Left, b);
+		//    Assert.IsNull(c.Left);
+		//    Assert.IsNull(c.Right);
+		//}
 
 		[TestMethod()]
 		public void RotateRightTest_Normative()

@@ -73,10 +73,7 @@ namespace Konves.Collections.ObjectModel
 			// TODO: balance and return new root instead.
 			return root;
 		}
-		
-		/// <summary>
-		/// Removes a node matching the specified query and returns the resulting tree's root node.
-		/// </summary>
+
 		public static INode<T> Remove<T>(this INode<T> root, object value, IComparer comparer, bool favorLeft)
 		{
 			if (ReferenceEquals(root, null))
@@ -84,181 +81,57 @@ namespace Konves.Collections.ObjectModel
 
 			int c = -comparer.Compare(root.Value, value);
 
-			if (c < 0)
+			if (c < 0) // to the left, to the left
 			{
-				if (ReferenceEquals(root.Left, null))
-					return root; // node is not found. don't remove, but still return existing root
-
-				else if (ReferenceEquals(root.Left.Left, null) && ReferenceEquals(root.Left.Right, null)) // Delete leaf
-					root.Left = null;
-
-				else if (ReferenceEquals(root.Left.Left, null)) // Delete left and replace with a single grandchild
-					root.Left = root.Left.Right;
-				else if (ReferenceEquals(root.Left.Right, null))
-					root.Left = root.Left.Left;
-
-				else if (comparer.Compare(root.Left.Value, value) == 0)
-					RemoveLeft(root, comparer, favorLeft); // Delete with children
-
-				else
-					return root.Left.Remove(value, comparer, favorLeft); // proceed to left
-
-				// TODO: balance and return new root instead.
+				root.Left = root.Left.Remove(value, comparer, favorLeft);
 				return root;
 			}
-			if (c > 0)
+			else if (c > 0)
 			{
-				if (ReferenceEquals(root.Right, null))
-					return root;
-
-				else if (ReferenceEquals(root.Right.Right, null) && ReferenceEquals(root.Right.Left, null)) // Delete leaf
-					root.Right = null;
-
-				else if (ReferenceEquals(root.Right.Right, null)) // Delete right and replace with a single grandchild
-					root.Right = root.Right.Left;
-				else if (ReferenceEquals(root.Right.Left, null))
-					root.Right = root.Right.Right;
-
-				else if (comparer.Compare(root.Right.Value, value) == 0)
-					RemoveRight(root, comparer, favorLeft); // Delete with children
-
-				else
-					return root.Right.Remove(value, comparer, favorLeft); // proceed to right
-
+				root.Right = root.Right.Remove(value, comparer, favorLeft);
 				return root;
 			}
-
-			// delete root
-			throw new NotImplementedException();
-		}
-
-		// may break if root has no children
-		public static void RemoveLeft<T>(INode<T> root, IComparer comparer, bool favorLeft)
-		{
-			INode<T> delete = root.Left;
-
-			if(favorLeft)
+			else if (ReferenceEquals(root.Left, null) && ReferenceEquals(root.Right, null)) // Leaf
 			{
-				INode<T> deleteIOPParent = null;
-				INode<T> deleteIOP = null;
+				return null;
+			}
+			else if (ReferenceEquals(root.Left, null)) // one child: Right
+			{
+				INode<T> node = root.Right;
+				root.Right = null;
+				return node;
+			}
+			else if (ReferenceEquals(root.Right, null)) // one child: Left
+			{
+				INode<T> node = root.Left;
+				root.Left = null;
+				return node;
+			}
+			else if (favorLeft)
+			{
+				INode<T> iop, iopp = null;
+				for (iop = root.Left; !ReferenceEquals(iop.Right, null); iopp = iop, iop = iop.Right) { }
 
-				for (INode<T> n = delete.Left; ; n = n.Right)
-				{
-					if (ReferenceEquals(n.Right, null))
-					{
-						deleteIOP = n;
-						break;
-					}
-
-					if (ReferenceEquals(n.Right.Right, null))
-					{
-						deleteIOPParent = n;
-						deleteIOP = n.Right;
-						break;
-					}
-				}
-
-				root.Left = deleteIOP;
-				deleteIOP.Right = delete.Right;
-				if(!ReferenceEquals(deleteIOPParent,null))
-					deleteIOPParent.Right = deleteIOP.Left;
-				deleteIOP.Left = delete.Left;
-				delete.Right = null;
-				delete.Left = null;
+				iop.Right = root.Right;
+				if (!ReferenceEquals(iopp, null))
+					iopp.Right = iop.Left;
+				iop.Left = root.Left;
+				root.Left = null;
+				root.Right = null;
+				 return iop;
 			}
 			else
 			{
-				INode<T> deleteIOSParent = null;
-				INode<T> deleteIOS = null;
+				INode<T> ios, iosp = null;
+				for (ios = root.Right; !ReferenceEquals(ios.Left, null); iosp = ios, ios = ios.Left) { }
 
-				for (INode<T> n = delete.Right; ; n = n.Left)
-				{
-					if (ReferenceEquals(n.Left, null))
-					{
-						deleteIOS = n;
-						break;
-					}
-
-					if (ReferenceEquals(n.Left.Left, null))
-					{
-						deleteIOSParent = n;
-						deleteIOS = n.Left;
-						break;
-					}
-				}
-
-				root.Left = deleteIOS;
-				deleteIOS.Left = delete.Left;
-				if (!ReferenceEquals(deleteIOSParent, null))
-					deleteIOSParent.Left = deleteIOS.Right;
-				deleteIOS.Right = delete.Right;
-				delete.Right = null;
-				delete.Left = null;
-			}
-		}
-
-		// may break if root has no children
-		public static void RemoveRight<T>(INode<T> root, IComparer comparer, bool favorLeft)
-		{
-			INode<T> delete = root.Right;
-
-			if (favorLeft)
-			{
-				INode<T> deleteIOPParent = null;
-				INode<T> deleteIOP = null;
-
-				for (INode<T> n = delete.Left; ; n = n.Right)
-				{
-					if (ReferenceEquals(n.Right, null))
-					{
-						deleteIOP = n;
-						break;
-					}
-
-					if (ReferenceEquals(n.Right.Right, null))
-					{
-						deleteIOPParent = n;
-						deleteIOP = n.Right;
-						break;
-					}
-				}
-
-				root.Right = deleteIOP;
-				deleteIOP.Right = delete.Right;
-				if (!ReferenceEquals(deleteIOPParent, null))
-					deleteIOPParent.Right = deleteIOP.Left;
-				deleteIOP.Left = delete.Left;
-				delete.Right = null;
-				delete.Left = null;
-			}
-			else
-			{
-				INode<T> deleteIOSParent = null;
-				INode<T> deleteIOS = null;
-
-				for (INode<T> n = delete.Right; ; n = n.Left)
-				{
-					if (ReferenceEquals(n.Left, null))
-					{
-						deleteIOS = n;
-						break;
-					}
-
-					if (ReferenceEquals(n.Left.Left, null))
-					{
-						deleteIOSParent = n;
-						deleteIOS = n.Left;
-						break;
-					}
-				}
-
-				root.Right = deleteIOS;
-				deleteIOS.Left = delete.Left;
-				if (!ReferenceEquals(deleteIOSParent, null))
-					deleteIOSParent.Left = deleteIOS.Right;
-				deleteIOS.Right = delete.Right;
-				delete.Right = null;
-				delete.Left = null;
+				ios.Left = root.Left;
+				if (!ReferenceEquals(iosp, null))
+					iosp.Left = ios.Right;
+				ios.Right = root.Right;
+				root.Left = null;
+				root.Right = null;
+				return ios;
 			}
 		}
 
