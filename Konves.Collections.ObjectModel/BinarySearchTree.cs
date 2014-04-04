@@ -63,14 +63,12 @@ namespace Konves.Collections.ObjectModel
 				if (ReferenceEquals(root.Left, null))
 					root.Left = node;
 				else
-					return root.Left.Insert(node, comparer);
+					root.Left = root.Left.Insert(node, comparer);
 			else if (c > 0)
 				if (ReferenceEquals(root.Right, null))
 					root.Right = node;
 				else
-					return root.Right.Insert(node, comparer);
-			else
-				return root; // node already exists. don't insert, but still return existing root
+					root.Right = root.Right.Insert(node, comparer);
 
 			// TODO: balance and return new root instead.
 			return root;
