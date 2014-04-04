@@ -445,5 +445,66 @@ namespace Konves.Collections.ObjectModel.Tests
 			Assert.IsNull(c.Left);
 			Assert.IsNull(c.Right);
 		}
+
+
+		[TestMethod()]
+		public void RotateRightTest_Normative()
+		{
+			// Arrange
+			Node<int> a = new Node<int> { Value = 1 };
+			Node<int> b = new Node<int> { Value = 2 };
+			Node<int> c = new Node<int> { Value = 3 };
+			Node<int> d = new Node<int> { Value = 4 };
+			Node<int> e = new Node<int> { Value = 5 };
+
+			b.Left = a;
+			b.Right = c;
+			d.Left = b;
+			d.Right = e;
+
+			INode<int> root = d;
+			INode<int> expected = b;
+			IComparer comparer = (new Comparer<int>());
+
+			// Act
+			INode<int> result = root.RotateRight();
+
+			// Assert
+			Assert.AreSame(expected, result);
+			Assert.AreSame(d.Left, c);
+			Assert.AreSame(d.Right, e);
+			Assert.AreSame(b.Left, a);
+			Assert.AreSame(b.Right, d);
+		}
+
+		[TestMethod()]
+		public void RotateLeftTest_Normative()
+		{
+			// Arrange
+			Node<int> a = new Node<int> { Value = 1 };
+			Node<int> b = new Node<int> { Value = 2 };
+			Node<int> c = new Node<int> { Value = 3 };
+			Node<int> d = new Node<int> { Value = 4 };
+			Node<int> e = new Node<int> { Value = 5 };
+
+			d.Left = c;
+			d.Right = e;
+			b.Left = a;
+			b.Right = d;
+
+			INode<int> root = b;
+			INode<int> expected = d;
+			IComparer comparer = (new Comparer<int>());
+
+			// Act
+			INode<int> result = root.RotateLeft();
+
+			// Assert
+			Assert.AreSame(expected, result);
+			Assert.AreSame(b.Left, a);
+			Assert.AreSame(b.Right, c);
+			Assert.AreSame(d.Left, b);
+			Assert.AreSame(d.Right, e);
+		}
 	}
 }

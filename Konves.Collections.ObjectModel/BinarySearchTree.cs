@@ -261,5 +261,37 @@ namespace Konves.Collections.ObjectModel
 				delete.Left = null;
 			}
 		}
+
+		/// <summary>
+		/// Rotates the node to the right and returns the pivot node (original the root's left node) as the new root node.
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="root">The original root node.</param>
+		/// <returns>Returns the new root node</returns>
+		public static INode<T> RotateRight<T>(this INode<T> root)
+		{
+			INode<T> pivot = root.Left;
+
+			root.Left = pivot.Right;
+			pivot.Right = root;
+
+			return pivot;
+		}
+
+		/// <summary>
+		/// Rotates the node to the left and returns the pivot node (original the root's right node) as the new root node.
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="root">The original root node.</param>
+		/// <returns>Returns the new root node</returns>
+		public static INode<T> RotateLeft<T>(this INode<T> root)
+		{
+			INode<T> pivot = root.Right;
+
+			root.Right = pivot.Left;
+			pivot.Left = root;
+
+			return pivot;
+		}
 	}
 }
