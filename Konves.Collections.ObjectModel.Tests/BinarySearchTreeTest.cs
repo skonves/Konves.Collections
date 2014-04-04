@@ -101,10 +101,10 @@ namespace Konves.Collections.ObjectModel.Tests
 			Node<int> c = new Node<int> { Value = 3 };
 			IComparer comparer = (new Comparer<int>());
 
-			INode<int> expected = root;
+			Node<int> expected = root;
 
 			// Act
-			INode<int> result = root.Insert(c, comparer);
+			Node<int> result = root.Insert(c, comparer);
 
 			// Assert
 			Assert.AreSame(expected, result);
@@ -132,10 +132,10 @@ namespace Konves.Collections.ObjectModel.Tests
 			Node<int> c = new Node<int> { Value = 6 };
 			IComparer comparer = (new Comparer<int>());
 
-			INode<int> expected = root;
+			Node<int> expected = root;
 
 			// Act
-			INode<int> result = root.Insert(c, comparer);
+			Node<int> result = root.Insert(c, comparer);
 
 			// Assert
 			Assert.AreSame(expected, result);
@@ -149,10 +149,10 @@ namespace Konves.Collections.ObjectModel.Tests
 
 			Node<int> root = a;
 			IComparer comparer = (new Comparer<int>());
-			INode<int> expected = null;
+			Node<int> expected = null;
 
 			// Act
-			INode<int> result = root.Remove(1, comparer, true);
+			Node<int> result = root.Remove(1, comparer, true);
 
 			// Assert
 			Assert.AreSame(expected, result);			
@@ -169,10 +169,10 @@ namespace Konves.Collections.ObjectModel.Tests
 
 			Node<int> root = b;
 			IComparer comparer = (new Comparer<int>());
-			INode<int> expected = a;
+			Node<int> expected = a;
 
 			// Act
-			INode<int> result = root.Remove(b.Value, comparer, true);
+			Node<int> result = root.Remove(b.Value, comparer, true);
 
 			// Assert
 			Assert.AreSame(expected, result);
@@ -189,10 +189,10 @@ namespace Konves.Collections.ObjectModel.Tests
 
 			Node<int> root = a;
 			IComparer comparer = (new Comparer<int>());
-			INode<int> expected = b;
+			Node<int> expected = b;
 
 			// Act
-			INode<int> result = root.Remove(a.Value, comparer, true);
+			Node<int> result = root.Remove(a.Value, comparer, true);
 
 			// Assert
 			Assert.AreSame(expected, result);
@@ -234,10 +234,10 @@ namespace Konves.Collections.ObjectModel.Tests
 
 			Node<int> root = g;
 			IComparer comparer = (new Comparer<int>());
-			INode<int> expected = f;
+			Node<int> expected = f;
 
 			// Act
-			INode<int> result = root.Remove(root.Value, comparer, true);
+			Node<int> result = root.Remove(root.Value, comparer, true);
 
 			// Assert
 			Assert.AreSame(expected, result);
@@ -563,12 +563,12 @@ namespace Konves.Collections.ObjectModel.Tests
 			d.Left = b;
 			d.Right = e;
 
-			INode<int> root = d;
-			INode<int> expected = b;
+			Node<int> root = d;
+			Node<int> expected = b;
 			IComparer comparer = (new Comparer<int>());
 
 			// Act
-			INode<int> result = root.RotateRight();
+			Node<int> result = root.RotateRight();
 
 			// Assert
 			Assert.AreSame(expected, result);
@@ -593,12 +593,12 @@ namespace Konves.Collections.ObjectModel.Tests
 			b.Left = a;
 			b.Right = d;
 
-			INode<int> root = b;
-			INode<int> expected = d;
+			Node<int> root = b;
+			Node<int> expected = d;
 			IComparer comparer = (new Comparer<int>());
 
 			// Act
-			INode<int> result = root.RotateLeft();
+			Node<int> result = root.RotateLeft();
 
 			// Assert
 			Assert.AreSame(expected, result);

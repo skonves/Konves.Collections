@@ -6,17 +6,17 @@ namespace Konves.Collections.ObjectModel
 {
 	public static class BinarySearchTree
 	{
-		public static IEnumerable<INode<T>> Traverse<T>(this INode<T> root)
+		public static IEnumerable<Node<T>> Traverse<T>(this Node<T> root)
 		{
 			if (ReferenceEquals(root, null))
 				yield break;
 
-			foreach (INode<T> child in root.Left.Traverse())
+			foreach (Node<T> child in root.Left.Traverse())
 			    yield return child;
 
 			yield return root;
 
-			foreach (INode<T> child in root.Right.Traverse())
+			foreach (Node<T> child in root.Right.Traverse())
 			    yield return child;
 		}
 
@@ -28,7 +28,7 @@ namespace Konves.Collections.ObjectModel
 		/// <param name="value">The value used to specify the node for which to search.</param>
 		/// <param name="comparer">An instance of a object to compare the value of the nodes in the subtree.</param>
 		/// <returns>The node whose key matches the query value</returns>
-		public static INode<T> Search<T>(this INode<T> root, object value, IComparer comparer)
+		public static Node<T> Search<T>(this Node<T> root, object value, IComparer comparer)
 		{
 			if (ReferenceEquals(root, null))
 				return null;
@@ -52,7 +52,7 @@ namespace Konves.Collections.ObjectModel
 		/// <param name="root">The original root node.</param>
 		/// <param name="comparer">An instance of a object to compare the value of the nodes in the subtree.</param>
 		/// <returns>Returns the subtree's new root node.</returns>
-		public static INode<T> Insert<T>(this INode<T> root, INode<T> node, IComparer comparer)
+		public static Node<T> Insert<T>(this Node<T> root, Node<T> node, IComparer comparer)
 		{
 			if (ReferenceEquals(root, null))
 				return node;
@@ -74,7 +74,7 @@ namespace Konves.Collections.ObjectModel
 			return root;
 		}
 
-		public static INode<T> Remove<T>(this INode<T> root, object value, IComparer comparer, bool favorLeft)
+		public static Node<T> Remove<T>(this Node<T> root, object value, IComparer comparer, bool favorLeft)
 		{
 			if (ReferenceEquals(root, null))
 				return root; // node is not found. don't remove, but still return existing root
@@ -97,19 +97,19 @@ namespace Konves.Collections.ObjectModel
 			}
 			else if (ReferenceEquals(root.Left, null)) // one child: Right
 			{
-				INode<T> node = root.Right;
+				Node<T> node = root.Right;
 				root.Right = null;
 				return node;
 			}
 			else if (ReferenceEquals(root.Right, null)) // one child: Left
 			{
-				INode<T> node = root.Left;
+				Node<T> node = root.Left;
 				root.Left = null;
 				return node;
 			}
 			else if (favorLeft)
 			{
-				INode<T> iop, iopp = null;
+				Node<T> iop, iopp = null;
 				for (iop = root.Left; !ReferenceEquals(iop.Right, null); iopp = iop, iop = iop.Right) { }
 
 				iop.Right = root.Right;
@@ -122,7 +122,7 @@ namespace Konves.Collections.ObjectModel
 			}
 			else
 			{
-				INode<T> ios, iosp = null;
+				Node<T> ios, iosp = null;
 				for (ios = root.Right; !ReferenceEquals(ios.Left, null); iosp = ios, ios = ios.Left) { }
 
 				ios.Left = root.Left;
@@ -141,9 +141,9 @@ namespace Konves.Collections.ObjectModel
 		/// <typeparam name="T"></typeparam>
 		/// <param name="root">The original root node.</param>
 		/// <returns>Returns the new root node</returns>
-		public static INode<T> RotateRight<T>(this INode<T> root)
+		public static Node<T> RotateRight<T>(this Node<T> root)
 		{
-			INode<T> pivot = root.Left;
+			Node<T> pivot = root.Left;
 
 			root.Left = pivot.Right;
 			pivot.Right = root;
@@ -157,9 +157,9 @@ namespace Konves.Collections.ObjectModel
 		/// <typeparam name="T"></typeparam>
 		/// <param name="root">The original root node.</param>
 		/// <returns>Returns the new root node</returns>
-		public static INode<T> RotateLeft<T>(this INode<T> root)
+		public static Node<T> RotateLeft<T>(this Node<T> root)
 		{
-			INode<T> pivot = root.Right;
+			Node<T> pivot = root.Right;
 
 			root.Right = pivot.Left;
 			pivot.Left = root;

@@ -5,12 +5,10 @@ using System.Text;
 
 namespace Konves.Collections.ObjectModel
 {
-	public class Node<T> : INode<T>
+	public class Node<T>
 	{
-		public INode<T> Left { get; set; }
-
-		public INode<T> Right { get; set; }
-
-		public T Value { get; set; }
+		public Node<T> Left;
+		public Node<T> Right;
+		public T Value;
 	}
 }
