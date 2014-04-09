@@ -9,6 +9,7 @@ namespace Konves.Collections.ObjectModel
 	{
 		public Node<T> Left;
 		public Node<T> Right;
+		public int Height;
 		public T Value;
 	}
 }
