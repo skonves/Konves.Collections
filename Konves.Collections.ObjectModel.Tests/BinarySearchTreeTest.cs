@@ -18,6 +18,7 @@ namespace Konves.Collections.ObjectModel.Tests
 			}
 		}
 
+		#region GetHeight
 		[TestMethod()]
 		public void GetHeight_Normative()
 		{
@@ -99,6 +100,89 @@ namespace Konves.Collections.ObjectModel.Tests
 			// Assert
 			Assert.AreEqual(expected, result);
 		}
+		#endregion
+
+		#region UpdateHeight
+		[TestMethod()]
+		public void UpdateHeight_Normative()
+		{
+			// Arrange
+			Node<int> root = new Node<int> { Value = 2 };
+
+			root.Left = new Node<int> { Value = 1, Height = 3 };
+			root.Right = new Node<int> { Value = 3, Height = 4 };
+
+			int expected = 5;
+
+			// Act
+			Node<int> result = root.UpdateHeight();
+
+			// Assert
+			Assert.AreEqual(expected, result.Height);
+		}
+
+		[TestMethod()]
+		public void UpdateHeight_LeftNode()
+		{
+			// Arrange
+			Node<int> root = new Node<int> { Value = 2 };
+
+			root.Left = new Node<int> { Value = 1, Height = 3 };
+
+			int expected = 4;
+
+			// Act
+			Node<int> result = root.UpdateHeight();
+
+			// Assert
+			Assert.AreEqual(expected, result.Height);
+		}
+
+		[TestMethod()]
+		public void UpdateHeight_RightNode()
+		{
+			// Arrange
+			Node<int> root = new Node<int> { Value = 1 };
+
+			root.Right = new Node<int> { Value = 2, Height = 3 };
+
+			int expected = 4;
+
+			// Act
+			Node<int> result = root.UpdateHeight();
+
+			// Assert
+			Assert.AreEqual(expected, result.Height);
+		}
+
+		[TestMethod()]
+		public void UpdateHeight_Leaf()
+		{
+			// Arrange
+			Node<int> root = new Node<int> { Value = 1 };
+
+			int expected = 0;
+
+			// Act
+			Node<int> result = root.UpdateHeight();
+
+			// Assert
+			Assert.AreEqual(expected, result.Height);
+		}
+
+		[TestMethod()]
+		public void UpdateHeight_Null()
+		{
+			// Arrange
+			Node<int> root = null;
+
+			// Act
+			Node<int> result = root.UpdateHeight();
+
+			// Assert
+			Assert.IsNull(result);
+		}
+		#endregion
 
 		[TestMethod()]
 		public void GetBalanceFactor_Normative()
@@ -660,8 +744,193 @@ namespace Konves.Collections.ObjectModel.Tests
 			int actualCount = result.Traverse().Count();
 
 			// Assert
-			Assert.AreSame(k, result);
 			Assert.AreEqual(expectedCount, actualCount);
+		}
+
+
+		[TestMethod()]
+		public void RemoveFirstTest_Leaf()
+		{
+			// Arrange
+			Node<int> a = new Node<int> { Value = 1 };
+
+			Node<int> root = a;
+			Node<int> expectedNewRoot = null;
+			Node<int> expectedRemovedNode = a;
+
+			// Act
+			Node<int> actualRemovedNode;
+			Node<int> actualNewRoot = root.RemoveFirst(out actualRemovedNode);
+
+			// Assert
+			Assert.AreSame(expectedNewRoot, actualNewRoot);
+			Assert.AreSame(expectedRemovedNode, actualRemovedNode);
+
+			Assert.IsNull(a.Left);
+			Assert.IsNull(a.Right);
+			Assert.AreEqual(0, a.Height);
+		}
+
+		[TestMethod()]
+		public void RemoveFirstTest_NoLeftSubTree()
+		{
+			// Arrange
+			Node<int> a = new Node<int> { Value = 1 };
+			Node<int> b = new Node<int> { Value = 2 };
+			Node<int> c = new Node<int> { Value = 3 };
+			Node<int> d = new Node<int> { Value = 4 };
+
+			c.Left = b;
+			c.Right = d;
+			a.Right = c;
+
+			b.Height = 0;
+			d.Height = 0;
+			c.Height = 1;
+			a.Height = 2;
+
+			Node<int> root = a;
+			Node<int> expectedNewRoot = c;
+			Node<int> expectedRemovedNode = a;
+
+			// Act
+			Node<int> actualRemovedNode;
+			Node<int> actualNewRoot = root.RemoveFirst(out actualRemovedNode);
+
+			// Assert
+			Assert.AreSame(expectedNewRoot, actualNewRoot);
+			Assert.AreSame(expectedRemovedNode, actualRemovedNode);
+
+			Assert.AreSame(b, c.Left);
+			Assert.AreSame(d, c.Right);
+			Assert.AreEqual(0, b.Height);
+			Assert.AreEqual(0, d.Height);
+			Assert.AreEqual(1, c.Height);
+
+			Assert.IsNull(a.Left);
+			Assert.IsNull(a.Right);
+			Assert.AreEqual(0, a.Height);
+		}
+
+		[TestMethod()]
+		public void RemoveFirstTest_FirstIsLeaf()
+		{
+			// Arrange
+			Node<int> a = new Node<int> { Value = 1 };
+			Node<int> b = new Node<int> { Value = 2 };
+			Node<int> c = new Node<int> { Value = 3 };
+			Node<int> d = new Node<int> { Value = 4 };
+			Node<int> e = new Node<int> { Value = 5 };
+			Node<int> f = new Node<int> { Value = 6 };
+			Node<int> g = new Node<int> { Value = 7 };
+
+			b.Left = a;
+			b.Right = c;
+			f.Left = e;
+			f.Right = g;
+			d.Left = b;
+			d.Right = f;
+
+			a.Height = 0;
+			c.Height = 0;
+			e.Height = 0;
+			g.Height = 0;
+			b.Height = 1;
+			f.Height = 1;			
+			d.Height = 2;
+
+			Node<int> root = d;
+			Node<int> expectedNewRoot = d;
+			Node<int> expectedRemovedNode = a;
+
+			// Act
+			Node<int> actualRemovedNode;
+			Node<int> actualNewRoot = root.RemoveFirst(out actualRemovedNode);
+
+			// Assert
+			Assert.AreSame(expectedNewRoot, actualNewRoot);
+			Assert.AreSame(expectedRemovedNode, actualRemovedNode);
+
+			Assert.AreSame(b, d.Left);
+			Assert.AreSame(f, d.Right);
+			Assert.IsNull(b.Left);
+			Assert.AreSame(c, b.Right);
+			Assert.AreSame(e, f.Left);
+			Assert.AreSame(g, f.Right);
+
+			Assert.AreEqual(2, d.Height);
+			Assert.AreEqual(1, b.Height);
+			Assert.AreEqual(1, f.Height);
+			Assert.AreEqual(0, c.Height);
+			Assert.AreEqual(0, e.Height);
+			Assert.AreEqual(0, g.Height);
+
+			Assert.IsNull(a.Left);
+			Assert.IsNull(a.Right);
+			Assert.AreEqual(0, a.Height);
+
+		}
+
+		[TestMethod()]
+		public void RemoveFirstTest_FirstHasRightSubTree()
+		{
+			// Arrange
+			Node<int> a = new Node<int> { Value = 1 };
+			Node<int> b = new Node<int> { Value = 2 };
+			Node<int> c = new Node<int> { Value = 3 };
+			Node<int> d = new Node<int> { Value = 4 };
+			Node<int> e = new Node<int> { Value = 5 };
+			Node<int> f = new Node<int> { Value = 6 };
+			Node<int> g = new Node<int> { Value = 7 };
+			Node<int> h = new Node<int> { Value = 8 };
+
+			c.Left = b;
+			c.Right = d;
+			g.Left = f;
+			g.Right = h;
+			a.Right = c;
+			e.Left = a;
+			e.Right = g;
+
+			b.Height = 0;
+			d.Height = 0;
+			f.Height = 0;
+			h.Height = 0;
+			c.Height = 1;
+			g.Height = 1;
+			a.Height = 2;
+			e.Height = 3;
+
+			Node<int> root = e;
+			Node<int> expectedNewRoot = e;
+			Node<int> expectedRemovedNode = a;
+
+			// Act
+			Node<int> actualRemovedNode;
+			Node<int> actualNewRoot = root.RemoveFirst(out actualRemovedNode);
+
+			// Assert
+			Assert.AreSame(expectedNewRoot, actualNewRoot);
+			Assert.AreSame(expectedRemovedNode, actualRemovedNode);
+
+			Assert.AreSame(b, c.Left);
+			Assert.AreSame(d, c.Right);
+			Assert.AreSame(f, g.Left);
+			Assert.AreSame(h, g.Right);
+			Assert.AreSame(c, e.Left);
+			Assert.AreSame(g, e.Right);
+
+			Assert.AreEqual(2, e.Height);
+			Assert.AreEqual(1, c.Height);
+			Assert.AreEqual(1, g.Height);
+			Assert.AreEqual(0, b.Height);
+			Assert.AreEqual(0, d.Height);
+			Assert.AreEqual(0, f.Height);
+			Assert.AreEqual(0, h.Height);
+
+			Assert.IsNull(a.Left);
+			Assert.IsNull(a.Right);
+			Assert.AreEqual(0, a.Height);
 		}
 	}
 }

@@ -135,70 +135,63 @@ namespace Konves.Collections.ObjectModel
 				else if (root.GetBalanceFactor() > 0)
 				{
 					// two subtrees, left is taller
-					Node<T> iop, iopp = null;
-					for (iop = root.Left; !ReferenceEquals(iop.Right, null); iopp = iop, iop = iop.Right) { }
+					Node<T> inOrderPredecessor;
+					Node<T> newLeft = root.Left.RemoveLast(out inOrderPredecessor);
 
-					iop.Right = root.Right;
-					if (!ReferenceEquals(iopp, null))
-						iopp.Right = iop.Left;
-					iop.Left = root.Left;
-					root.Left = null;
-					root.Right = null;
+					inOrderPredecessor.Left = newLeft;
+					inOrderPredecessor.Right = root.Right;
 
-					iop.Left.UpdateRight();
-					iop.Height = iop.GetHeight();
+					root.Clear();
 
-					return iop.Balance();
+					return inOrderPredecessor;
 				}
 				else
 				{
 					// two subtrees, same height or right is taller
-					Node<T> ios, iosp = null;
-					for (ios = root.Right; !ReferenceEquals(ios.Left, null); iosp = ios, ios = ios.Left) { }
+					Node<T> inOrderSucessor;
+					Node<T> newRight = root.Right.RemoveFirst(out inOrderSucessor);
 
-					ios.Left = root.Left;
-					if (!ReferenceEquals(iosp, null))
-						iosp.Left = ios.Right;
-					ios.Right = root.Right;
-					root.Left = null;
-					root.Right = null;
+					inOrderSucessor.Left = root.Left;
+					inOrderSucessor.Right = newRight;
 
-					ios.Right.UpdateLeft();
-					ios.Height = ios.GetHeight();
+					root.Clear();
 
-					return ios.Balance();
+					return inOrderSucessor;
 				}
 			}
 		}
 
 		/// <summary>
-		/// Recurses the chain of right nodes updating the height and balance of each from the bottom up returning the new root node.
+		/// Removes the first node and returns the new root.
 		/// </summary>
 		/// <typeparam name="T"></typeparam>
-		/// <param name="root">The root node.</param>
-		/// <returns>Returns operation's resulting root node.</returns>
-		public static Node<T> UpdateRight<T>(this Node<T> root)
-		{
-			if (!ReferenceEquals(root.Right, null))
-				root.Right.UpdateRight();
-
-			root.Height = root.GetHeight();
-			return root.Balance();
-		}
-
-		/// <summary>
-		/// Recurses the chain of left nodes updating the height and balance of each from the bottom up returning the new root node.
-		/// </summary>
-		/// <typeparam name="T"></typeparam>
-		/// <param name="root">The root node.</param>
-		/// <returns>Returns operation's resulting root node.</returns>
-		public static Node<T> UpdateLeft<T>(this Node<T> root)
+		/// <param name="root">The root.</param>
+		/// <param name="removed">The removed node.</param>
+		/// <returns>Returns the new root node.</returns>
+		public static Node<T> RemoveFirst<T>(this Node<T> root, out Node<T> removed)
 		{
 			if (!ReferenceEquals(root.Left, null))
-				root.Left.UpdateLeft();
+			{
+				root.Left = root.Left.RemoveFirst(out removed).UpdateHeight().Balance();
+				return root.UpdateHeight().Balance();
+			}
 
-			root.Height = root.GetHeight();
-			return root.Balance();
+			Node<T> newRoot = root.Right;
+			removed = root.Clear();
+			return newRoot;
+		}
+
+		public static Node<T> RemoveLast<T>(this Node<T> root, out Node<T> removed)
+		{
+			if (!ReferenceEquals(root.Left, null))
+			{
+				root.Right = root.Right.RemoveLast(out removed).UpdateHeight().Balance();
+				return root.UpdateHeight().Balance();
+			}
+
+			Node<T> newRoot = root.Left;
+			removed = root.Clear();
+			return newRoot;
 		}
 
 		/// <summary>
@@ -270,6 +263,15 @@ namespace Konves.Collections.ObjectModel
 			}
 		}
 
+		public static Node<T> UpdateHeight<T>(this Node<T> root)
+		{
+			if (ReferenceEquals(root, null))
+				return null;
+
+			root.Height = root.GetHeight();
+			return root;
+		}
+
 		/// <summary>
 		/// Gets the height of the specified root node based on the height of its children.
 		/// </summary>
@@ -302,6 +304,14 @@ namespace Konves.Collections.ObjectModel
 				return root.Left.Height + 1;
 			else
 				return root.Left.Height - root.Right.Height;
+		}
+
+		public static Node<T> Clear<T>(this Node<T> root)
+		{
+			root.Right = null;
+			root.Left = null;
+			root.Height = 0;
+			return root;
 		}
 	}
 }
