@@ -734,19 +734,22 @@ namespace Konves.Collections.ObjectModel.Tests
 
 			int expectedCount = 12;
 
+			Node<int> removed1;
+			Node<int> removed2;
+			Node<int> removed3;
+
 			// Act
 			Node<int> result =
 				h
-				.Remove(8, comparer)
-				.Remove(9, comparer)
-				.Remove(10, comparer);
+				.Remove(8, comparer, out removed1)
+				.Remove(9, comparer, out removed2)
+				.Remove(10, comparer, out removed3);
 
 			int actualCount = result.Traverse().Count();
 
 			// Assert
 			Assert.AreEqual(expectedCount, actualCount);
 		}
-
 
 		[TestMethod()]
 		public void RemoveFirstTest_Leaf()
