@@ -89,26 +89,27 @@ namespace Konves.Collections.ObjectModel
 			return root.Balance();
 		}
 
-		public static Node<T> Remove<T>(this Node<T> root, object value, IComparer comparer)
+		public static Node<T> Remove<T>(this Node<T> root, object value, IComparer comparer, out Node<T> removed)
 		{
 			if (ReferenceEquals(root, null))
+			{
+				removed = null;
 				return null;
+			}
 
 			int c = comparer.Compare(value, root.Value);
 
 			if (c < 0)
 			{
 				// Remove to the left
-				root.Left = root.Left.Remove(value, comparer);
-				root.Height = root.GetHeight();
-				return root;
+				root.Left = root.Left.Remove(value, comparer, out removed);
+				return root.UpdateHeight().Balance();
 			}
 			else if (c > 0)
 			{
 				// Remove to the right
-				root.Right = root.Right.Remove(value, comparer);
-				root.Height = root.GetHeight();
-				return root;
+				root.Right = root.Right.Remove(value, comparer, out removed);
+				return root.UpdateHeight().Balance();
 			}
 			else
 			{
@@ -116,20 +117,21 @@ namespace Konves.Collections.ObjectModel
 				if (ReferenceEquals(root.Left, null) && ReferenceEquals(root.Right, null)) 
 				{
 					// Leaf
+					removed = root;
 					return null;
 				}
 				else if (ReferenceEquals(root.Left, null))
 				{
 					// one subtree to the right
-					Node<T> node = root.Right;					
-					root.Right = null;
+					Node<T> node = root.Right;
+					removed = root.Clear();
 					return node;
 				}
 				else if (ReferenceEquals(root.Right, null))
 				{
 					// one subtree to the left
 					Node<T> node = root.Left;
-					root.Left = null;
+					removed = root.Clear();
 					return node;
 				}
 				else if (root.GetBalanceFactor() > 0)
@@ -141,7 +143,7 @@ namespace Konves.Collections.ObjectModel
 					inOrderPredecessor.Left = newLeft;
 					inOrderPredecessor.Right = root.Right;
 
-					root.Clear();
+					removed = root.Clear();
 
 					return inOrderPredecessor;
 				}
@@ -154,7 +156,7 @@ namespace Konves.Collections.ObjectModel
 					inOrderSucessor.Left = root.Left;
 					inOrderSucessor.Right = newRight;
 
-					root.Clear();
+					removed = root.Clear();
 
 					return inOrderSucessor;
 				}
