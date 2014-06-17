@@ -9,8 +9,8 @@
     <ProjectGuid>{7114495D-27D6-44A6-A71C-7AD8CA4F2EB9}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Konves.Collections.ObjectModel.Tests</RootNamespace>
-    <AssemblyName>Konves.Collections.ObjectModel.Tests</AssemblyName>
+    <RootNamespace>Konves.Collections.Tests</RootNamespace>
+    <AssemblyName>Konves.Collections.Tests</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{3AC096D0-A1C2-E12C-1390-A8335801FDAB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
@@ -51,12 +51,14 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BinarySearchTreeTest.cs" />
+    <Compile Include="IntervalComparerTests.cs" />
+    <Compile Include="IntervalValueComparerTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Konves.Collections.ObjectModel\Konves.Collections.ObjectModel.csproj">
+    <ProjectReference Include="..\Konves.Collections\Konves.Collections.csproj">
       <Project>{F52C20D4-4243-4318-BBC9-E33C7FEAF890}</Project>
-      <Name>Konves.Collections.ObjectModel</Name>
+      <Name>Konves.Collections</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
