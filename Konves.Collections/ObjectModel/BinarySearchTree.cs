@@ -4,8 +4,17 @@ using System.Collections;
 
 namespace Konves.Collections.ObjectModel
 {
+	/// <summary>
+	/// Provides functionality for manipulating binary tree nodes.  All operations are self-balancing based on an AVL tree.
+	/// </summary>
 	public static class BinarySearchTree
 	{
+		/// <summary>
+		/// Performs a lazy, depth-first traversal of the subtree defined by the current root node.
+		/// </summary>
+		/// <typeparam name="T">The type of the current tree's node values.</typeparam>
+		/// <param name="root">The root node.</param>
+		/// <returns>Returns an enumeration of all of the subtree's nodes, including the root node.</returns>
 		public static IEnumerable<Node<T>> Traverse<T>(this Node<T> root)
 		{
 			if (ReferenceEquals(root, null))
@@ -21,9 +30,9 @@ namespace Konves.Collections.ObjectModel
 		}
 
 		/// <summary>
-		/// Searches for a value within the specified node and its subtree.
+		/// Searches for a value within the current node and its subtree.
 		/// </summary>
-		/// <typeparam name="T"></typeparam>
+		/// <typeparam name="T">The type of the current tree's node values.</typeparam>
 		/// <param name="root">The root node of the subtree to search.</param>
 		/// <param name="value">The value used to specify the node for which to search.</param>
 		/// <param name="comparer">An instance of a object to compare the value of the nodes in the subtree.</param>
@@ -45,17 +54,21 @@ namespace Konves.Collections.ObjectModel
 		}
 
 		/// <summary>
-		/// Inserts a node to into the subtree with the specified root and returns the new root node.
+		/// Inserts a node to into the subtree with the current root and returns the new root node.
 		/// </summary>
-		/// <typeparam name="T"></typeparam>
-		/// <param name="node">The node to insert.</param>
+		/// <typeparam name="T">The type of the current tree's node values.</typeparam>
 		/// <param name="root">The original root node.</param>
-		/// <param name="comparer">An instance of a object to compare the value of the nodes in the subtree.</param>
+		/// <param name="node">The node to insert.</param>
+		/// <param name="comparer">An instance of an object to compare the value of the nodes in the subtree.</param>
+		/// <param name="success">An output value indicating whether or not the new node was successfully inserted.</param>
 		/// <returns>Returns the subtree's new root node.</returns>
-		public static Node<T> Insert<T>(this Node<T> root, Node<T> node, IComparer comparer)
+		public static Node<T> Insert<T>(this Node<T> root, Node<T> node, IComparer<T> comparer, out bool success)
 		{
 			if (ReferenceEquals(root, null))
+			{
+				success = true;
 				return node;
+			}
 
 			int c = comparer.Compare(node.Value, root.Value);
 
@@ -63,30 +76,34 @@ namespace Konves.Collections.ObjectModel
 			{
 				if (ReferenceEquals(root.Left, null))
 				{
+					success = true;
 					root.Left = node;
 					root.Left.Height = 0;
 				}
 				else
 				{
-					root.Left = root.Left.Insert(node, comparer);
+					root.Left = root.Left.Insert(node, comparer, out success);
 				}
 			}
 			else if (c > 0)
 			{
 				if (ReferenceEquals(root.Right, null))
 				{
+					success = true;
 					root.Right = node;
 					root.Right.Height = 0;
 				}
 				else
 				{
-					root.Right = root.Right.Insert(node, comparer);
+					root.Right = root.Right.Insert(node, comparer, out success);
 				}
 			}
+			else
+			{
+				success = false;
+			}
 
-			root.Height = root.GetHeight();
-
-			return root.Balance();
+			return root.UpdateHeight().Balance();
 		}
 
 		public static Node<T> Remove<T>(this Node<T> root, object value, IComparer comparer, out Node<T> removed)
@@ -164,9 +181,9 @@ namespace Konves.Collections.ObjectModel
 		}
 
 		/// <summary>
-		/// Removes the first node and returns the new root.
+		/// Removes the first node of the current root and returns the new root.
 		/// </summary>
-		/// <typeparam name="T"></typeparam>
+		/// <typeparam name="T">The type of the current tree's node values.</typeparam>
 		/// <param name="root">The root.</param>
 		/// <param name="removed">The removed node.</param>
 		/// <returns>Returns the new root node.</returns>
@@ -197,9 +214,9 @@ namespace Konves.Collections.ObjectModel
 		}
 
 		/// <summary>
-		/// Rotates the node to the right and returns the pivot node (original the root's left node) as the new root node.
+		/// Rotates the current node to the right and returns the pivot node (original the root's left node) as the new root node.
 		/// </summary>
-		/// <typeparam name="T"></typeparam>
+		/// <typeparam name="T">The type of the current tree's node values.</typeparam>
 		/// <param name="root">The original root node.</param>
 		/// <returns>Returns the new root node</returns>
 		public static Node<T> RotateRight<T>(this Node<T> root)
@@ -219,9 +236,9 @@ namespace Konves.Collections.ObjectModel
 		}
 
 		/// <summary>
-		/// Rotates the node to the left and returns the pivot node (original the root's right node) as the new root node.
+		/// Rotates the current node to the left and returns the pivot node (original the root's right node) as the new root node.
 		/// </summary>
-		/// <typeparam name="T"></typeparam>
+		/// <typeparam name="T">The type of the current tree's node values.</typeparam>
 		/// <param name="root">The original root node.</param>
 		/// <returns>Returns the new root node</returns>
 		public static Node<T> RotateLeft<T>(this Node<T> root)
@@ -240,6 +257,12 @@ namespace Konves.Collections.ObjectModel
 			return pivot;
 		}
 
+		/// <summary>
+		/// Balances the current node and returns the new root node.
+		/// </summary>
+		/// <typeparam name="T">The type of the current tree's node values.</typeparam>
+		/// <param name="root">The original root node.</param>
+		/// <returns>Returns the new root node.</returns>
 		public static Node<T> Balance<T>(this Node<T> root)
 		{
 			if (ReferenceEquals(root, null))
@@ -265,6 +288,12 @@ namespace Konves.Collections.ObjectModel
 			}
 		}
 
+		/// <summary>
+		/// Updates the height property of the current root node.
+		/// </summary>
+		/// <typeparam name="T">The type of the current tree's node values.</typeparam>
+		/// <param name="root">The root node.</param>
+		/// <returns>Returns the updated root node.</returns>
 		public static Node<T> UpdateHeight<T>(this Node<T> root)
 		{
 			if (ReferenceEquals(root, null))
@@ -275,9 +304,9 @@ namespace Konves.Collections.ObjectModel
 		}
 
 		/// <summary>
-		/// Gets the height of the specified root node based on the height of its children.
+		/// Gets the height of the current root node based on the height of its children.
 		/// </summary>
-		/// <typeparam name="T"></typeparam>
+		/// <typeparam name="T">The type of the current tree's node values.</typeparam>
 		/// <param name="root">The root node.</param>
 		/// <returns>The hight of the specified node.</returns>
 		public static int GetHeight<T>(this Node<T> root)
@@ -308,6 +337,12 @@ namespace Konves.Collections.ObjectModel
 				return root.Left.Height - root.Right.Height;
 		}
 
+		/// <summary>
+		/// Clears all child and height properties on the current root node.
+		/// </summary>
+		/// <typeparam name="T">The type of the current tree's node values.</typeparam>
+		/// <param name="root">The root node.</param>
+		/// <returns>Returns the updated root node.</returns>
 		public static Node<T> Clear<T>(this Node<T> root)
 		{
 			root.Right = null;

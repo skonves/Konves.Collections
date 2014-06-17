@@ -1,7 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using Konves.Collections.Comparers;
+using Konves.Collections.Generic;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Konves.Collections.ObjectModel.Tests
@@ -9,7 +8,7 @@ namespace Konves.Collections.ObjectModel.Tests
 	[TestClass()]
 	public class IntervalComparerTests
 	{
-		[TestMethod()]
+		[TestMethod]
 		public void CompareTest_1()
 		{
 			// Arrange
@@ -36,7 +35,7 @@ namespace Konves.Collections.ObjectModel.Tests
 			Assert.AreEqual(expected, result);
 		}
 
-		[TestMethod()]
+		[TestMethod]
 		public void CompareTest_2()
 		{
 			// Arrange
@@ -63,7 +62,7 @@ namespace Konves.Collections.ObjectModel.Tests
 			Assert.AreEqual(expected, result);
 		}
 
-		[TestMethod()]
+		[TestMethod]
 		public void CompareTest_3()
 		{
 			// Arrange
@@ -90,7 +89,7 @@ namespace Konves.Collections.ObjectModel.Tests
 			Assert.AreEqual(expected, result);
 		}
 
-		[TestMethod()]
+		[TestMethod]
 		public void CompareTest_4()
 		{
 			// Arrange
@@ -117,7 +116,7 @@ namespace Konves.Collections.ObjectModel.Tests
 			Assert.AreEqual(expected, result);
 		}
 
-		[TestMethod()]
+		[TestMethod]
 		public void CompareTest_5()
 		{
 			// Arrange
@@ -144,7 +143,7 @@ namespace Konves.Collections.ObjectModel.Tests
 			Assert.AreEqual(expected, result);
 		}
 
-		[TestMethod()]
+		[TestMethod]
 		public void CompareTest_6()
 		{
 			// Arrange
@@ -171,7 +170,7 @@ namespace Konves.Collections.ObjectModel.Tests
 			Assert.AreEqual(expected, result);
 		}
 
-		[TestMethod()]
+		[TestMethod]
 		public void CompareTest_7()
 		{
 			// Arrange
@@ -198,7 +197,7 @@ namespace Konves.Collections.ObjectModel.Tests
 			Assert.AreEqual(expected, result);
 		}
 
-		[TestMethod()]
+		[TestMethod]
 		public void CompareTest_8()
 		{
 			// Arrange

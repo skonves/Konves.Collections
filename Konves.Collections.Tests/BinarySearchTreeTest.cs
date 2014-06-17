@@ -10,16 +10,21 @@ namespace Konves.Collections.ObjectModel.Tests
 	[TestClass()]
 	public class BinarySearchTreeTest
 	{
-		public class Comparer<T> : IComparer where T : IComparable
+		public class Comparer<T> : IComparer<T>,IComparer where T : IComparable<T>,IComparable
 		{
 			public int Compare(object x, object y)
+			{
+				return (x as IComparable).CompareTo(y);
+			}
+
+			public int Compare(T x, T y)
 			{
 				return (x as IComparable).CompareTo(y);
 			}
 		}
 
 		#region GetHeight
-		[TestMethod()]
+		[TestMethod]
 		public void GetHeight_Normative()
 		{
 			// Arrange
@@ -37,7 +42,7 @@ namespace Konves.Collections.ObjectModel.Tests
 			Assert.AreEqual(expected, result);
 		}
 
-		[TestMethod()]
+		[TestMethod]
 		public void GetHeight_LeftNode()
 		{
 			// Arrange
@@ -54,7 +59,7 @@ namespace Konves.Collections.ObjectModel.Tests
 			Assert.AreEqual(expected, result);
 		}
 
-		[TestMethod()]
+		[TestMethod]
 		public void GetHeight_RightNode()
 		{
 			// Arrange
@@ -71,7 +76,7 @@ namespace Konves.Collections.ObjectModel.Tests
 			Assert.AreEqual(expected, result);
 		}
 
-		[TestMethod()]
+		[TestMethod]
 		public void GetHeight_Leaf()
 		{
 			// Arrange
@@ -86,7 +91,7 @@ namespace Konves.Collections.ObjectModel.Tests
 			Assert.AreEqual(expected, result);
 		}
 
-		[TestMethod()]
+		[TestMethod]
 		public void GetHeight_Null()
 		{
 			// Arrange
@@ -103,7 +108,7 @@ namespace Konves.Collections.ObjectModel.Tests
 		#endregion
 
 		#region UpdateHeight
-		[TestMethod()]
+		[TestMethod]
 		public void UpdateHeight_Normative()
 		{
 			// Arrange
@@ -121,7 +126,7 @@ namespace Konves.Collections.ObjectModel.Tests
 			Assert.AreEqual(expected, result.Height);
 		}
 
-		[TestMethod()]
+		[TestMethod]
 		public void UpdateHeight_LeftNode()
 		{
 			// Arrange
@@ -138,7 +143,7 @@ namespace Konves.Collections.ObjectModel.Tests
 			Assert.AreEqual(expected, result.Height);
 		}
 
-		[TestMethod()]
+		[TestMethod]
 		public void UpdateHeight_RightNode()
 		{
 			// Arrange
@@ -155,7 +160,7 @@ namespace Konves.Collections.ObjectModel.Tests
 			Assert.AreEqual(expected, result.Height);
 		}
 
-		[TestMethod()]
+		[TestMethod]
 		public void UpdateHeight_Leaf()
 		{
 			// Arrange
@@ -170,7 +175,7 @@ namespace Konves.Collections.ObjectModel.Tests
 			Assert.AreEqual(expected, result.Height);
 		}
 
-		[TestMethod()]
+		[TestMethod]
 		public void UpdateHeight_Null()
 		{
 			// Arrange
@@ -184,7 +189,7 @@ namespace Konves.Collections.ObjectModel.Tests
 		}
 		#endregion
 
-		[TestMethod()]
+		[TestMethod]
 		public void GetBalanceFactor_Normative()
 		{
 			// Arrange
@@ -202,7 +207,7 @@ namespace Konves.Collections.ObjectModel.Tests
 			Assert.AreEqual(expected, result);
 		}
 
-		[TestMethod()]
+		[TestMethod]
 		public void GetBalanceFactor_LeftNode()
 		{
 			// Arrange
@@ -219,7 +224,7 @@ namespace Konves.Collections.ObjectModel.Tests
 			Assert.AreEqual(expected, result);
 		}
 
-		[TestMethod()]
+		[TestMethod]
 		public void GetBalanceFactor_RightNode()
 		{
 			// Arrange
@@ -236,7 +241,7 @@ namespace Konves.Collections.ObjectModel.Tests
 			Assert.AreEqual(expected, result);
 		}
 
-		[TestMethod()]
+		[TestMethod]
 		public void GetBalanceFactor_Leaf()
 		{
 			// Arrange
@@ -251,7 +256,7 @@ namespace Konves.Collections.ObjectModel.Tests
 			Assert.AreEqual(expected, result);
 		}
 
-		[TestMethod()]
+		[TestMethod]
 		public void GetBalanceFactor_Null()
 		{
 			// Arrange
@@ -266,7 +271,7 @@ namespace Konves.Collections.ObjectModel.Tests
 			Assert.AreEqual(expected, result);
 		}
 		
-		[TestMethod()]
+		[TestMethod]
 		public void RotateRightTest_Normative()
 		{
 			// Arrange
@@ -296,7 +301,7 @@ namespace Konves.Collections.ObjectModel.Tests
 			Assert.AreSame(b.Right, d);
 		}
 
-		[TestMethod()]
+		[TestMethod]
 		public void RotateLeftTest_Normative()
 		{
 			// Arrange
@@ -326,7 +331,7 @@ namespace Konves.Collections.ObjectModel.Tests
 			Assert.AreSame(d.Right, e);
 		}
 		
-		[TestMethod()]
+		[TestMethod]
 		public void Balance_LeftRightCase()
 		{
 			// Arrange
@@ -376,7 +381,7 @@ namespace Konves.Collections.ObjectModel.Tests
 			Assert.AreEqual(0, g.Height);
 		}
 
-		[TestMethod()]
+		[TestMethod]
 		public void Balance_LeftLeftCase()
 		{
 			// Arrange
@@ -426,7 +431,7 @@ namespace Konves.Collections.ObjectModel.Tests
 			Assert.AreEqual(0, g.Height);
 		}
 
-		[TestMethod()]
+		[TestMethod]
 		public void Balance_RightLeftCase()
 		{
 			// Arrange
@@ -476,7 +481,7 @@ namespace Konves.Collections.ObjectModel.Tests
 			Assert.AreEqual(0, g.Height);
 		}
 
-		[TestMethod()]
+		[TestMethod]
 		public void Balance_RightRightCase()
 		{
 			// Arrange
@@ -526,7 +531,7 @@ namespace Konves.Collections.ObjectModel.Tests
 			Assert.AreEqual(0, g.Height);
 		}
 		
-		[TestMethod()]
+		[TestMethod]
 		public void TraverseTest()
 		{
 			// Arrange
@@ -556,7 +561,7 @@ namespace Konves.Collections.ObjectModel.Tests
 			CollectionAssert.AreEqual(expected, result);
 		}
 
-		[TestMethod()]
+		[TestMethod]
 		public void SearchTest()
 		{
 			// Arrange
@@ -588,7 +593,7 @@ namespace Konves.Collections.ObjectModel.Tests
 			Assert.AreSame(expected, result);
 		}
 
-		[TestMethod()]
+		[TestMethod]
 		public void InsertTest()
 		{
 			// Arrange
@@ -600,19 +605,33 @@ namespace Konves.Collections.ObjectModel.Tests
 			Node<int> f = new Node<int> { Value = 6 };
 			Node<int> g = new Node<int> { Value = 7 };
 
-			IComparer comparer = (new Comparer<int>());
+			IComparer<int> comparer = (new Comparer<int>());
+
+			bool bSuccess;
+			bool cSuccess;
+			bool dSuccess;
+			bool eSuccess;
+			bool fSuccess;
+			bool gSuccess;
 			
 			// Act
 			Node<int> result =
 				a
-				.Insert(b, comparer)
-				.Insert(c, comparer)
-				.Insert(d, comparer)
-				.Insert(e, comparer)
-				.Insert(f, comparer)
-				.Insert(g, comparer);
+					.Insert(b, comparer, out bSuccess)
+					.Insert(c, comparer, out cSuccess)
+					.Insert(d, comparer, out dSuccess)
+					.Insert(e, comparer, out eSuccess)
+					.Insert(f, comparer,  out fSuccess)
+					.Insert(g, comparer, out gSuccess);
 
 			// Assert
+			Assert.IsTrue(bSuccess);
+			Assert.IsTrue(cSuccess);
+			Assert.IsTrue(dSuccess);
+			Assert.IsTrue(eSuccess);
+			Assert.IsTrue(fSuccess);
+			Assert.IsTrue(gSuccess);
+
 			Assert.AreSame(d, result);
 			Assert.AreSame(b, d.Left);
 			Assert.AreSame(f, d.Right);
@@ -630,7 +649,7 @@ namespace Konves.Collections.ObjectModel.Tests
 			Assert.AreEqual(0, g.Height);
 		}
 
-		[TestMethod()]
+		[TestMethod]
 		public void InsertTest_Duplicate()
 		{
 			// Arrange
@@ -642,26 +661,54 @@ namespace Konves.Collections.ObjectModel.Tests
 			Node<int> f = new Node<int> { Value = 6 };
 			Node<int> g = new Node<int> { Value = 7 };
 
-			IComparer comparer = (new Comparer<int>());
+			IComparer<int> comparer = (new Comparer<int>());
+
+			bool bSuccess;
+			bool cSuccess;
+			bool dSuccess;
+			bool eSuccess;
+			bool fSuccess;
+			bool gSuccess;
+
+			bool b2Success;
+			bool c2Success;
+			bool d2Success;
+			bool e2Success;
+			bool f2Success;
+			bool g2Success;
 
 			// Act
 			Node<int> result =
 				a
-				.Insert(b, comparer)
-				.Insert(c, comparer)
-				.Insert(d, comparer)
-				.Insert(e, comparer)
-				.Insert(f, comparer)
-				.Insert(g, comparer)
+				.Insert(b, comparer, out bSuccess)
+				.Insert(c, comparer, out cSuccess)
+				.Insert(d, comparer, out dSuccess)
+				.Insert(e, comparer, out eSuccess)
+				.Insert(f, comparer, out fSuccess)
+				.Insert(g, comparer, out gSuccess)
 
-				.Insert(b, comparer)
-				.Insert(c, comparer)
-				.Insert(d, comparer)
-				.Insert(e, comparer)
-				.Insert(f, comparer)
-				.Insert(g, comparer);
+				.Insert(b, comparer, out b2Success)
+				.Insert(c, comparer, out c2Success)
+				.Insert(d, comparer, out d2Success)
+				.Insert(e, comparer, out e2Success)
+				.Insert(f, comparer,  out f2Success)
+				.Insert(g, comparer, out g2Success);
 
 			// Assert
+			Assert.IsTrue(bSuccess);
+			Assert.IsTrue(cSuccess);
+			Assert.IsTrue(dSuccess);
+			Assert.IsTrue(eSuccess);
+			Assert.IsTrue(fSuccess);
+			Assert.IsTrue(gSuccess);
+
+			Assert.IsFalse(b2Success);
+			Assert.IsFalse(c2Success);
+			Assert.IsFalse(d2Success);
+			Assert.IsFalse(e2Success);
+			Assert.IsFalse(f2Success);
+			Assert.IsFalse(g2Success);
+
 			Assert.AreSame(d, result);
 			Assert.AreSame(b, d.Left);
 			Assert.AreSame(f, d.Right);
@@ -679,7 +726,7 @@ namespace Konves.Collections.ObjectModel.Tests
 			Assert.AreEqual(0, g.Height);
 		}
 
-		[TestMethod()]
+		[TestMethod]
 		public void RemoveTest()
 		{
 			// Arrange
@@ -751,7 +798,7 @@ namespace Konves.Collections.ObjectModel.Tests
 			Assert.AreEqual(expectedCount, actualCount);
 		}
 
-		[TestMethod()]
+		[TestMethod]
 		public void RemoveFirstTest_Leaf()
 		{
 			// Arrange
@@ -774,7 +821,7 @@ namespace Konves.Collections.ObjectModel.Tests
 			Assert.AreEqual(0, a.Height);
 		}
 
-		[TestMethod()]
+		[TestMethod]
 		public void RemoveFirstTest_NoLeftSubTree()
 		{
 			// Arrange
@@ -815,7 +862,7 @@ namespace Konves.Collections.ObjectModel.Tests
 			Assert.AreEqual(0, a.Height);
 		}
 
-		[TestMethod()]
+		[TestMethod]
 		public void RemoveFirstTest_FirstIsLeaf()
 		{
 			// Arrange
@@ -874,7 +921,7 @@ namespace Konves.Collections.ObjectModel.Tests
 
 		}
 
-		[TestMethod()]
+		[TestMethod]
 		public void RemoveFirstTest_FirstHasRightSubTree()
 		{
 			// Arrange
@@ -937,3 +984,4 @@ namespace Konves.Collections.ObjectModel.Tests
 		}
 	}
 }
+ 
